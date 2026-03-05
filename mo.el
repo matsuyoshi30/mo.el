@@ -42,6 +42,12 @@
   "Default target group name for mo."
   :type 'string)
 
+(defcustom mo-preview-use-new-tab nil
+  "When non-nil, always open the preview in a new tab-bar tab.
+By default, mo splits the current window when only one window exists
+and creates a new tab only when the frame is already split."
+  :type 'boolean)
+
 (defvar mo--process nil
   "The mo background process.")
 
@@ -232,9 +238,10 @@ Follows the github-slugger algorithm used by rehype-slug."
 (defun mo--setup-window (source-buf)
   "Arrange windows for mo preview.
 SOURCE-BUF is the markdown buffer.
-If only one window, split horizontally.
-If already split, create a new tab-bar tab."
-  (unless (one-window-p)
+If `mo-preview-use-new-tab' is non-nil, always create a new tab-bar tab.
+Otherwise, split horizontally when only one window exists,
+or create a new tab when already split."
+  (when (or mo-preview-use-new-tab (not (one-window-p)))
     (let ((tab-name (format "mo:%s"
                             (file-name-nondirectory
                              (or (buffer-file-name) "preview")))))
@@ -245,6 +252,13 @@ If already split, create a new tab-bar tab."
   (split-window-right)
   (other-window 1)
   (mo--open-xwidget-preview source-buf))
+
+;;;###autoload
+(defun mo-preview-in-tab ()
+  "Like `mo-preview', but always open the preview in a new tab-bar tab."
+  (interactive)
+  (let ((mo-preview-use-new-tab t))
+    (mo-preview)))
 
 ;;;###autoload
 (defun mo-preview ()
