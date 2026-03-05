@@ -100,8 +100,12 @@
 
 (defun mo--xwidget-available-p ()
   "Return non-nil if xwidget-webkit is usable."
+  ;; `xwidget-internal' is the canonical runtime feature flag for xwidgets.
+  ;; Checking this avoids false positives on builds without xwidget support.
   (and (require 'xwidget nil t)
-       (fboundp 'xwidget-webkit-browse-url)))
+       (featurep 'xwidget-internal)
+       (fboundp 'xwidget-webkit-browse-url)
+       (fboundp 'xwidget-webkit-execute-script)))
 
 (defun mo--open-xwidget-preview (source-buf)
   "Open the mo preview in an xwidget-webkit buffer.
