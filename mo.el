@@ -264,9 +264,9 @@ xwidget-webkit preview buffer side by side."
     (unless (mo--wait-for-server)
       (user-error "mo server did not start within 5 seconds"))
     (mo--setup-window source-buf)
-    ;; Return to the source buffer and enable scroll sync
-    (select-window (get-buffer-window source-buf))
-    (mo--enable-scroll-sync)))
+    ;; Enable scroll sync in the source buffer (focus stays on preview)
+    (with-current-buffer source-buf
+      (mo--enable-scroll-sync))))
 
 ;;;###autoload
 (defun mo-shutdown ()
