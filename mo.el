@@ -107,6 +107,17 @@
        (fboundp 'xwidget-webkit-browse-url)
        (fboundp 'xwidget-webkit-execute-script)))
 
+(defun mo--quit-preview ()
+  "Kill the mo preview buffer and close its window."
+  (interactive)
+  (let ((buf (current-buffer))
+        (win (selected-window)))
+    (when (eq buf mo--preview-xwidget-buffer)
+      (setq mo--preview-xwidget-buffer nil))
+    (kill-buffer buf)
+    (unless (one-window-p)
+      (delete-window win))))
+
 (defun mo--open-xwidget-preview (source-buf)
   "Open the mo preview in an xwidget-webkit buffer.
 SOURCE-BUF is the markdown buffer to sync scrolling with."
@@ -121,6 +132,8 @@ SOURCE-BUF is the markdown buffer to sync scrolling with."
             (when xw
               (with-current-buffer source-buf
                 (setq mo--xwidget xw))))
+          ;; Bind q to kill the preview buffer and close its window
+          (local-set-key (kbd "q") #'mo--quit-preview)
           ;; When this xwidget buffer is killed, delete the window too
           (let ((buf (current-buffer)))
             (add-hook 'kill-buffer-hook
