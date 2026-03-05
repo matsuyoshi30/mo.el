@@ -117,7 +117,7 @@ SOURCE-BUF is the markdown buffer to sync scrolling with."
           ;; Track the actual xwidget buffer created by xwidget-webkit
           (setq mo--preview-xwidget-buffer (current-buffer))
           ;; Store the last created xwidget in the source buffer for scroll sync
-          (let ((xw (car (last (xwidget-list-xwidgets)))))
+          (let ((xw (xwidget-webkit-last-session)))
             (when xw
               (with-current-buffer source-buf
                 (setq mo--xwidget xw))))
