@@ -241,17 +241,20 @@ SOURCE-BUF is the markdown buffer.
 If `mo-preview-use-new-tab' is non-nil, always create a new tab-bar tab.
 Otherwise, split horizontally when only one window exists,
 or create a new tab when already split."
-  (when (or mo-preview-use-new-tab (not (one-window-p)))
+  (cond
+   ((or mo-preview-use-new-tab (not (one-window-p)))
     (let ((tab-name (format "mo:%s"
                             (file-name-nondirectory
                              (or (buffer-file-name) "preview")))))
       (tab-bar-new-tab)
       (tab-bar-rename-tab tab-name)
       (setq mo--managed-tab tab-name)
-      (delete-other-windows)))
-  (split-window-right)
-  (other-window 1)
-  (mo--open-xwidget-preview source-buf))
+      (delete-other-windows))
+    (mo--open-xwidget-preview source-buf))
+   (t
+    (split-window-right)
+    (other-window 1)
+    (mo--open-xwidget-preview source-buf))))
 
 ;;;###autoload
 (defun mo-preview-in-tab ()
